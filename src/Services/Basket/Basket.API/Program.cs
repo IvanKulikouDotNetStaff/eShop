@@ -1,5 +1,4 @@
-using Catalog.API.Data;
-using Catalog.API.Repositories;
+using Basket.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +9,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ICatalogContext,CatalogContext>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration["CacheSettings:ConnectionString"];
+});
+
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 
 var app = builder.Build();
 
@@ -22,7 +25,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

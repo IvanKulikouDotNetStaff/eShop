@@ -1,0 +1,43 @@
+version: '3.4'
+
+services:
+  catalogdb:
+    container_name: catalogdb
+    image: mongo
+    
+  basketdb:
+    container_name: baksetdb
+    image: redis:alpine
+
+  discountdb:
+    container_name: discountdb
+    image: postgres
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+
+  catalog.api:
+    container_name: catalog.api
+    image: ${DOCKER_REGISTRY-}catalogapi
+    build:
+      context: .
+      dockerfile: Services/Catalog/Catalog.API/Dockerfile
+
+  basket.api:
+    image: ${DOCKER_REGISTRY-}basketapi
+    build:
+      context: .
+      dockerfile: Services/Basket/Basket.API/Dockerfile
+
+  discount.api:
+    image: ${DOCKER_REGISTRY-}discountapi
+    build:
+      context: .
+      dockerfile: Services/Discount/Discount.API/Dockerfile
+
+volumes:
+  mongo_data:
+  postgres_data:
+  pgadmin_data:
+
