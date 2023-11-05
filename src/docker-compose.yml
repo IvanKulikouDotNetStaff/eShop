@@ -13,6 +13,9 @@ services:
     container_name: discountdb
     image: postgres
 
+  orderdb:
+    image: mrc.microsoft.com/mssql/server:2017-latest
+
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4
@@ -36,8 +39,15 @@ services:
       context: .
       dockerfile: Services/Discount/Discount.API/Dockerfile
 
+  discount.grps:
+    image: ${DOCKER_REGISTRY-}discountgrps
+    build:
+      context: .
+      dockerfile: Services/Discount/Discount.Grps/Dockerfile
+
 volumes:
   mongo_data:
   postgres_data:
   pgadmin_data:
+
 

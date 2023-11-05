@@ -27,6 +27,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
+   orderdb:
+    container_name: orderdb
+    environment:
+        SA_PASSWORD: "SwN123456789"
+        ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+        - "1433:1433" 
+
   pgadmin:
     container_name: pgadmin
     environment:
@@ -56,6 +65,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "CacheSettings:ConnectionString=localhost:6479"
+      - "GrpsSettings:DiscountUri=discount.grpc" 
     depends_on:
       - basketdb
     ports:
@@ -72,6 +82,19 @@ services:
       - "CacheSettings:ConnectionString=Server=localhost;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234"
     ports:
       - "8002:80"
+    depends_on:
+      - discountdb
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  discount.grps:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - "CacheSettings:ConnectionString=Server=localhost;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234"
+    ports:
+      - "8003:80"
     depends_on:
       - discountdb
     volumes:
